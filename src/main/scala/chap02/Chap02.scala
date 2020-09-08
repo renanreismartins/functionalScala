@@ -1,6 +1,6 @@
 package chap02
 
-object Exe2_2 {
+object Chap02 {
   @annotation.tailrec
   def isSorted[A](as: Array[A], ordered: (A, A) => Boolean): Boolean = {
     if (as.length < 2) true
