@@ -8,13 +8,14 @@ object Chap02 {
     else false
   }
 
-  def curry[A,B,C](f: (A, B) => C): A => (B => C) = {
+  def curry[A,B,C](f: (A, B) => C): A => (B => C) =
     (a: A) => (b: B) => f.apply(a, b)
-  }
 
-  def uncurry[A,B,C](f: A => B => C): (A, B) => C = {
+  def uncurry[A,B,C](f: A => B => C): (A, B) => C =
     (a: A, b: B) => f(a)(b)
-  }
+
+  def compose[A,B,C](f: B => C, g: A => B): A => C =
+    (a: A) => f(g(a))
 
   def main(args: Array[String]): Unit = {
     println(isSorted(Array(1,2), (a: Int, b: Int) => a < b))
