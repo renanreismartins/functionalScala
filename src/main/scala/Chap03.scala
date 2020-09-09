@@ -1,7 +1,9 @@
 object Chap03 {
 
   sealed trait List[+A]
+
   case object Nil extends List[Nothing]
+
   case class Cons[+A](head: A, tail: List[A]) extends List[A]
 
   object List {
@@ -39,11 +41,17 @@ object Chap03 {
         case Cons(_, xs) => Cons(a, xs)
       }
 
+    def drop[A](l: List[A], n: Int): List[A] =
+      if (n == 0) l
+      else if (l == Nil) Nil
+      else drop(List.tail(l), n - 1)
+
   }
 
   def main(args: Array[String]): Unit = {
     println(List.x)
     println(List.tail(List(1, 2, 3, 4, 5)))
+    println(List.drop(List(1, 2, 3, 4, 5), 2))
   }
 
 }
