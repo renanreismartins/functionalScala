@@ -46,12 +46,20 @@ object Chap03 {
       else if (l == Nil) Nil
       else drop(List.tail(l), n - 1)
 
+    def dropWhile[A](l: List[A], f: A => Boolean): List[A] = {
+      l match {
+        case Nil => Nil
+        case Cons(x, xs) => if (f(x)) dropWhile(xs, f) else l
+      }
+    }
+
   }
 
   def main(args: Array[String]): Unit = {
     println(List.x)
     println(List.tail(List(1, 2, 3, 4, 5)))
     println(List.drop(List(1, 2, 3, 4, 5), 2))
+    println(List.dropWhile(List(1, 2, 3, 4, 5), (x: Int) => x < 3))
   }
 
 }
