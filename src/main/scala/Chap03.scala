@@ -46,11 +46,23 @@ object Chap03 {
       else if (l == Nil) Nil
       else drop(List.tail(l), n - 1)
 
-    def dropWhile[A](l: List[A], f: A => Boolean): List[A] = {
-      l match {
-        case Nil => Nil
-        case Cons(x, xs) => if (f(x)) dropWhile(xs, f) else l
+    def dropWhile[A](l: List[A], f: A => Boolean): List[A] = l match {
+      case Nil => Nil
+      case Cons(x, xs) => if (f(x)) dropWhile(xs, f) else l
+    }
+
+    // this gives a reversed init list.
+    // maybe count the number of elemtns then use drop[A](l: List[A], n: Int)?
+    def init[A](l: List[A]): List[A] = {
+      def loop(l: List[A], acc: List[A]): List[A] = {
+        l match {
+          case Cons(_, Nil) => acc
+          case Cons(x, xs) => loop(xs, Cons(x, acc))
+          case Nil => acc
+        }
       }
+
+      loop(l, Nil)
     }
 
   }
@@ -60,6 +72,7 @@ object Chap03 {
     println(List.tail(List(1, 2, 3, 4, 5)))
     println(List.drop(List(1, 2, 3, 4, 5), 2))
     println(List.dropWhile(List(1, 2, 3, 4, 5), (x: Int) => x < 3))
+    println(List.init(List()))
   }
 
 }
