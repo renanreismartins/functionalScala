@@ -65,6 +65,14 @@ object Chap03 {
       loop(l, Nil)
     }
 
+    def foldRight[A,B](as: List[A], z: B)(f: (A, B) => B): B = as match {
+      case Nil => z
+      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+    }
+
+   def length[A](as: List[A]): Int = foldRight(as, 0)((_: A, acc: Int) => acc + 1)
+
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -73,6 +81,7 @@ object Chap03 {
     println(List.drop(List(1, 2, 3, 4, 5), 2))
     println(List.dropWhile(List(1, 2, 3, 4, 5), (x: Int) => x < 3))
     println(List.init(List()))
+    println(List.length(List(1, 2, 3)))
   }
 
 }
