@@ -70,6 +70,11 @@ object Chap03 {
       case Cons(x, xs) => f(x, foldRight(xs, z)(f))
     }
 
+    def foldLeft[A,B](as: List[A], z: B)(f: (B, A) => B): B = as match {
+      case Nil => z
+      case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
+    }
+
    def length[A](as: List[A]): Int = foldRight(as, 0)((_: A, acc: Int) => acc + 1)
 
 
@@ -82,6 +87,7 @@ object Chap03 {
     println(List.dropWhile(List(1, 2, 3, 4, 5), (x: Int) => x < 3))
     println(List.init(List()))
     println(List.length(List(1, 2, 3)))
+    println(List.foldLeft(List(1, 2, 3), 0)(_ + _))
   }
 
 }
