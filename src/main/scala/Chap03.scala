@@ -77,6 +77,11 @@ object Chap03 {
 
    def length[A](as: List[A]): Int = foldRight(as, 0)((_: A, acc: Int) => acc + 1)
 
+    def sumFoldLeft(ints: List[Int]): Int = foldLeft(ints, 0)(_ + _)
+
+    def productFoldLeft(ds: List[Double]): Double = foldLeft(ds, 1D)(_ * _)
+
+    def lengthFoldLeft[A](as: List[A]): Int = foldLeft(as, 0)((acc: Int, _) => acc + 1)
 
   }
 
@@ -88,6 +93,9 @@ object Chap03 {
     println(List.init(List()))
     println(List.length(List(1, 2, 3)))
     println(List.foldLeft(List(1, 2, 3), 0)(_ + _))
+    println(List.sumFoldLeft(List(1, 2, 3)))
+    println(List.productFoldLeft(List(1, 2, 3)))
+    println(List.lengthFoldLeft(List(1, 2, 3)))
   }
 
 }
