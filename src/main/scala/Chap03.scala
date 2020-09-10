@@ -83,6 +83,8 @@ object Chap03 {
 
     def lengthFoldLeft[A](as: List[A]): Int = foldLeft(as, 0)((acc: Int, _) => acc + 1)
 
+    def reverse[A](as: List[A]): List[A] = foldLeft(as, Nil:List[A])((acc: List[A], a: A) => Cons(a, acc))
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -96,6 +98,7 @@ object Chap03 {
     println(List.sumFoldLeft(List(1, 2, 3)))
     println(List.productFoldLeft(List(1, 2, 3)))
     println(List.lengthFoldLeft(List(1, 2, 3)))
+    println(List.reverse(List(1, 2, 3)))
   }
 
 }
