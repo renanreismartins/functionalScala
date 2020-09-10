@@ -85,6 +85,8 @@ object Chap03 {
 
     def reverse[A](as: List[A]): List[A] = foldLeft(as, Nil:List[A])((acc: List[A], a: A) => Cons(a, acc))
 
+    def appendViaFoldRight[A](l: List[A], r: List[A]): List[A] = foldRight(l, r)((h, acc) => Cons(h, acc))
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -99,6 +101,7 @@ object Chap03 {
     println(List.productFoldLeft(List(1, 2, 3)))
     println(List.lengthFoldLeft(List(1, 2, 3)))
     println(List.reverse(List(1, 2, 3)))
+    println(List.appendViaFoldRight(List(1, 2, 3), List(4, 5, 6)))
   }
 
 }
