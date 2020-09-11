@@ -30,6 +30,13 @@ object Chap03Trees {
       }
     }
 
+    def map[A,B](t: Tree[A])(f: A => B): Tree[B] = {
+      t match {
+        case Leaf(v) => Leaf(f(v))
+        case Branch(l, r) => Branch(map(l)(f), map(r)(f))
+      }
+    }
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -42,6 +49,10 @@ object Chap03Trees {
     println(Tree.depth(Leaf(1)))
     println(Tree.depth(Branch(Leaf(1), Leaf(2))))
     println(Tree.depth(Branch(Branch(Branch(Leaf(9), Leaf(7)), Leaf(2)), Leaf(3))))
+
+    println("map")
+    println(Tree.map(Branch(Branch(Branch(Leaf(3), Leaf(32)), Leaf(1)), Leaf(8)))(_ + 1))
+
   }
 
 }
