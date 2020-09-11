@@ -130,6 +130,20 @@ object Chap03 {
       }
     }
 
+    def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = {
+      def loop(sup: List[A], sub: List[A], r: Boolean): Boolean = {
+        sup match {
+          case Nil => sub == Nil
+          case Cons(x, xs) => sub match {
+            case Nil => r
+            case Cons(y, ys) => if (x == y) loop(xs, ys, true) else loop(sup, ys, false)
+          }
+        }
+      }
+
+      loop(sup, sub, false)
+    }
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -153,6 +167,10 @@ object Chap03 {
     println(List.filterFromFlatMap(List(1, 2, 3))(_ % 2 == 0))
     println(List.addCorrespondingItems(List(1, 2, 3), List(4,5,6)))
     println(List.zipWith(List(1, 2, 3), List(4,5,6))(_ + _))
+    println(List.hasSubsequence(List(1, 2, 3), List(1, 3)))
+    println(List.hasSubsequence(List(1, 2, 3), List(1, 2)))
+    println(List.hasSubsequence(List(1, 2, 3), List(5)))
+    println(List.hasSubsequence(List(1), List(5)))
   }
 
 }
