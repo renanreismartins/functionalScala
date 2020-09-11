@@ -53,6 +53,12 @@ object Chap03Trees {
 
     def sizeInTermsOfFold[A](t: Tree[A]): Int = fold(t)(_ => 1)((l, r) => 1 + l + r)
 
+    //def maximum(t: Tree[Int]): Int = fold(t)(_)(_ max _) My first impl where I assumed _ could be identity.
+    def maximumInTermsOfFold(t: Tree[Int]): Int = fold(t)(a => a)(_ max _)
+
+    def depthInTermsOfFold[A](t: Tree[A]): Int = fold(t)(_ => 1)((l, r) => (l + 1) max (r + 1))
+
+    def mapInTermsOfFold[A,B](t: Tree[A])(f: A => B): Tree[B] = fold(t)(a => Leaf(f(a)): Tree[B])((l, r) => Branch(l, r))
   }
 
   def main(args: Array[String]): Unit = {
@@ -69,13 +75,24 @@ object Chap03Trees {
     println("maximum")
     println(Tree.maximum(Branch(Branch(Leaf(1), Leaf(2)), Leaf(5))))
 
+    println("maximum in terms of fold")
+    println(Tree.maximumInTermsOfFold(Branch(Branch(Leaf(1), Leaf(2)), Leaf(5))))
+
     println("depth")
     println(Tree.depth(Leaf(1)))
     println(Tree.depth(Branch(Leaf(1), Leaf(2))))
     println(Tree.depth(Branch(Branch(Branch(Leaf(9), Leaf(7)), Leaf(2)), Leaf(3))))
 
+    println("depth in terms of fold")
+    println(Tree.depthInTermsOfFold(Leaf(1)))
+    println(Tree.depthInTermsOfFold(Branch(Leaf(1), Leaf(2))))
+    println(Tree.depthInTermsOfFold(Branch(Branch(Branch(Leaf(9), Leaf(7)), Leaf(2)), Leaf(3))))
+
     println("map")
     println(Tree.map(Branch(Branch(Branch(Leaf(3), Leaf(32)), Leaf(1)), Leaf(8)))(_ + 1))
+
+    println("map in terms of fold")
+    println(Tree.mapInTermsOfFold(Branch(Branch(Branch(Leaf(3), Leaf(32)), Leaf(1)), Leaf(8)))(_ + 1))
 
 
   }
