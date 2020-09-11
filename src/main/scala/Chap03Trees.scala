@@ -37,12 +37,36 @@ object Chap03Trees {
       }
     }
 
+//    def fold[A,B](t: Tree[A], z: B)(f: (A, B) => B): B = {
+//      t match {
+//        case Leaf(v) => f(v, z)
+//        case Branch(l, r) => fold(l, fold(r, z)(f))(f)
+//      }
+//    }
+//
+//    def sizeInTermsOfFold[A](t: Tree[A]): Int = fold(t, 1)((a, acc) => 1 + acc )
+
+    def fold[A,B](t: Tree[A])(f: A => B)(g: (B,B) => B): B = t match {
+      case Leaf(a) => f(a)
+      case Branch(l,r) => g(fold(l)(f)(g), fold(r)(f)(g))
+    }
+
+    def sizeInTermsOfFold[A](t: Tree[A]): Int = fold(t)(_ => 1)((l, r) => 1 + l + r)
+
   }
 
   def main(args: Array[String]): Unit = {
+    println("size:")
     println(Tree.size(Leaf(1)))
     println(Tree.size(Branch(Leaf(1), Leaf(2))))
     println(Tree.size(Branch(Branch(Branch(Leaf(3), Leaf(32)), Leaf(1)), Leaf(8))))
+
+    println("size in terms of fold")
+    println(Tree.sizeInTermsOfFold(Leaf(1)))
+    println(Tree.sizeInTermsOfFold(Branch(Leaf(1), Leaf(2))))
+    println(Tree.sizeInTermsOfFold(Branch(Branch(Branch(Leaf(3), Leaf(32)), Leaf(1)), Leaf(8))))
+
+    println("maximum")
     println(Tree.maximum(Branch(Branch(Leaf(1), Leaf(2)), Leaf(5))))
 
     println("depth")
@@ -52,6 +76,7 @@ object Chap03Trees {
 
     println("map")
     println(Tree.map(Branch(Branch(Branch(Leaf(3), Leaf(32)), Leaf(1)), Leaf(8)))(_ + 1))
+
 
   }
 
