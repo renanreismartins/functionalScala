@@ -107,6 +107,12 @@ object Chap03 {
       case Cons(x, xs) => if (f(x)) Cons(x, filter(xs)(f)) else filter(xs)(f)
     }
 
+    def flatMap[A,B](as: List[A])(f: A => List[B]): List[B] = as match {
+      case Nil => Nil
+      case Cons(x, xs) => appendViaFoldRight(f(x), flatMap(xs)(f))
+    }
+
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -126,6 +132,7 @@ object Chap03 {
     println(List.transformDoubleIntoString(List(1, 2, 3)))
     println(List.map(List(1, 2, 3))(_ + 1))
     println(List.filter(List(1, 2, 3))(_ % 2 == 0))
+    println(List.flatMap(List(1,2,3))(i => List(i,i)))
   }
 
 }
