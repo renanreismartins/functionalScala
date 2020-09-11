@@ -87,6 +87,12 @@ object Chap03 {
 
     def appendViaFoldRight[A](l: List[A], r: List[A]): List[A] = foldRight(l, r)((h, acc) => Cons(h, acc))
 
+    def addOneToListOfInts(l: List[Int]): List[Int] = l match {
+      case Nil => Nil
+      case Cons(x, xs) => Cons(x + 1, addOneToListOfInts(xs))
+    }
+
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -102,6 +108,7 @@ object Chap03 {
     println(List.lengthFoldLeft(List(1, 2, 3)))
     println(List.reverse(List(1, 2, 3)))
     println(List.appendViaFoldRight(List(1, 2, 3), List(4, 5, 6)))
+    println(List.addOneToListOfInts(List(1, 2, 3)))
   }
 
 }
