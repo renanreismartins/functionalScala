@@ -97,6 +97,10 @@ object Chap03 {
       case Cons(x, xs) => Cons(x.toString, transformDoubleIntoString(xs))
     }
 
+    def map[A,B](as: List[A])(f: A => B): List[B] = as match {
+      case Nil => Nil
+      case Cons(x, xs) => Cons(f(x), map(xs)(f))
+    }
 
   }
 
@@ -115,6 +119,7 @@ object Chap03 {
     println(List.appendViaFoldRight(List(1, 2, 3), List(4, 5, 6)))
     println(List.addOneToListOfInts(List(1, 2, 3)))
     println(List.transformDoubleIntoString(List(1, 2, 3)))
+    println(List.map(List(1, 2, 3))(_ + 1))
   }
 
 }
