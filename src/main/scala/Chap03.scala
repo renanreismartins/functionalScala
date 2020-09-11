@@ -112,6 +112,7 @@ object Chap03 {
       case Cons(x, xs) => appendViaFoldRight(f(x), flatMap(xs)(f))
     }
 
+    def filterFromFlatMap[A](as: List[A])(f: A => Boolean): List[A] = flatMap(as)(e => if (f(e)) List(e) else List())
 
   }
 
@@ -133,6 +134,7 @@ object Chap03 {
     println(List.map(List(1, 2, 3))(_ + 1))
     println(List.filter(List(1, 2, 3))(_ % 2 == 0))
     println(List.flatMap(List(1,2,3))(i => List(i,i)))
+    println(List.filterFromFlatMap(List(1, 2, 3))(_ % 2 == 0))
   }
 
 }
