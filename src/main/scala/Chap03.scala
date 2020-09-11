@@ -102,6 +102,11 @@ object Chap03 {
       case Cons(x, xs) => Cons(f(x), map(xs)(f))
     }
 
+    def filter[A](as: List[A])(f: A => Boolean): List[A] = as match {
+      case Nil => Nil
+      case Cons(x, xs) => if (f(x)) Cons(x, filter(xs)(f)) else filter(xs)(f)
+    }
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -120,6 +125,7 @@ object Chap03 {
     println(List.addOneToListOfInts(List(1, 2, 3)))
     println(List.transformDoubleIntoString(List(1, 2, 3)))
     println(List.map(List(1, 2, 3))(_ + 1))
+    println(List.filter(List(1, 2, 3))(_ % 2 == 0))
   }
 
 }
