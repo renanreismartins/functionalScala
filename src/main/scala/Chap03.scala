@@ -92,6 +92,11 @@ object Chap03 {
       case Cons(x, xs) => Cons(x + 1, addOneToListOfInts(xs))
     }
 
+    def transformDoubleIntoString(l: List[Double]): List[String] = l match {
+      case Nil => Nil
+      case Cons(x, xs) => Cons(x.toString, transformDoubleIntoString(xs))
+    }
+
 
   }
 
@@ -109,6 +114,7 @@ object Chap03 {
     println(List.reverse(List(1, 2, 3)))
     println(List.appendViaFoldRight(List(1, 2, 3), List(4, 5, 6)))
     println(List.addOneToListOfInts(List(1, 2, 3)))
+    println(List.transformDoubleIntoString(List(1, 2, 3)))
   }
 
 }
