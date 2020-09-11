@@ -114,6 +114,14 @@ object Chap03 {
 
     def filterFromFlatMap[A](as: List[A])(f: A => Boolean): List[A] = flatMap(as)(e => if (f(e)) List(e) else List())
 
+    def addCorrespondingItems(l: List[Int], r: List[Int]): List[Int] = l match {
+      case Nil => Nil
+      case Cons(x, xs) => r match {
+        case Nil => Nil
+        case Cons(y, ys) => Cons(x + y, addCorrespondingItems(xs, ys))
+      }
+    }
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -135,6 +143,7 @@ object Chap03 {
     println(List.filter(List(1, 2, 3))(_ % 2 == 0))
     println(List.flatMap(List(1,2,3))(i => List(i,i)))
     println(List.filterFromFlatMap(List(1, 2, 3))(_ % 2 == 0))
+    println(List.addCorrespondingItems(List(1, 2, 3), List(4,5,6)))
   }
 
 }
