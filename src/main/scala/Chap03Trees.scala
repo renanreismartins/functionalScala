@@ -23,6 +23,13 @@ object Chap03Trees {
       loop(tree, 0)
     }
 
+    def depth[A](t: Tree[A]): Int = {
+      t match {
+        case Leaf(_) => 1
+        case Branch(l, r) => (depth(l) + 1) max (depth(r) + 1)
+      }
+    }
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -30,6 +37,11 @@ object Chap03Trees {
     println(Tree.size(Branch(Leaf(1), Leaf(2))))
     println(Tree.size(Branch(Branch(Branch(Leaf(3), Leaf(32)), Leaf(1)), Leaf(8))))
     println(Tree.maximum(Branch(Branch(Leaf(1), Leaf(2)), Leaf(5))))
+
+    println("depth")
+    println(Tree.depth(Leaf(1)))
+    println(Tree.depth(Branch(Leaf(1), Leaf(2))))
+    println(Tree.depth(Branch(Branch(Branch(Leaf(9), Leaf(7)), Leaf(2)), Leaf(3))))
   }
 
 }
