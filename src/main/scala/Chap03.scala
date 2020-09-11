@@ -122,6 +122,14 @@ object Chap03 {
       }
     }
 
+    def zipWith[A, B](l: List[A], r: List[A])(f: (A, A) => B): List[B] = l match {
+      case Nil => Nil
+      case Cons(x, xs) => r match {
+        case Nil => Nil
+        case Cons(y, ys) => Cons(f(x, y), zipWith(xs, ys)(f))
+      }
+    }
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -144,6 +152,7 @@ object Chap03 {
     println(List.flatMap(List(1,2,3))(i => List(i,i)))
     println(List.filterFromFlatMap(List(1, 2, 3))(_ % 2 == 0))
     println(List.addCorrespondingItems(List(1, 2, 3), List(4,5,6)))
+    println(List.zipWith(List(1, 2, 3), List(4,5,6))(_ + _))
   }
 
 }
