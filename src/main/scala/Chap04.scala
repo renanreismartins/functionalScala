@@ -1,4 +1,4 @@
-import Chap03._
+//import Chap03._
 
 object Chap04 {
 
@@ -39,22 +39,30 @@ object Chap04 {
     mean(xs).flatMap(m => mean(xs.map(e => math.pow(e - m, 2))))
   }
 
-  def map2[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = a.flatMap(va => b.map(vb => f(va, vb)))
+  def map2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = a.flatMap(va => b.map(vb => f(va, vb)))
 
-  def sequence[A](a: List[Option[A]]): Option[List[A]] = {
-    def loop(as: List[Option[A]], acc: List[A]): List[A] = {
-      as match {
-        case Cons(Some(v), xs) => loop(xs, Cons(v, acc))
-        case Cons(None, _) => Nil
-        case Nil => acc
-      }
+  //  def sequence[A](a: List[Option[A]]): Option[List[A]] = {
+  //    def loop(as: List[Option[A]], acc: List[A]): List[A] = {
+  //      as match {
+  //        case Cons(Some(v), xs) => loop(xs, Cons(v, acc))
+  //        case Cons(None, _) => Nil
+  //        case Nil => acc
+  //      }
+  //    }
+  //
+  //    loop(a, Nil) match {
+  //      case Nil => None
+  //      case x => Some(x)
+  //    }
+  //  }
+
+  def sequence[A](a: List[Option[A]]): Option[List[A]] =
+    a match {
+      case Nil => Some(Nil)
+      case h :: t => h flatMap (hh => sequence(t) map (hh :: _))
     }
 
-    loop(a, Nil) match {
-      case Nil => None
-      case x => Some(x)
-    }
-  }
+  def sequenceRight[A](a: List[Option[A]]): Option[List[A]] = a.foldRight[Option[List[A]]](Some(Nil))((opA, optionListA) => map2(opA, optionListA)((opaValue, listA) => opaValue :: listA))
 
   def main(args: Array[String]): Unit = {
     println("Map")
@@ -83,9 +91,13 @@ object Chap04 {
     println(None.filter(_ => true))
     println()
 
+    //    println("sequence")
+    //    println(Chap04.sequence(Cons(Some("Renan"), Cons(Some("Reis"), Nil))))
+    //    println(Chap04.sequence(Cons(Some("Renan"), Cons(Some("Reis"), Cons(None, Nil)))))
+    //    println()
+
     println("sequence")
-    println(Chap04.sequence(Cons(Some("Renan"), Cons(Some("Reis"), Nil))))
-    println(Chap04.sequence(Cons(Some("Renan"), Cons(Some("Reis"), Cons(None, Nil)))))
-    println()
+    println(Chap04.sequence(List(Some("a"), None, Some("b"))))
+    println(Chap04.sequence(List(None)))
   }
 }
