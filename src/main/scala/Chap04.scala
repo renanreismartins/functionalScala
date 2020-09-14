@@ -31,6 +31,16 @@ object Chap04 {
 
   case object None extends Option[Nothing]
 
+  def variance(xs: Seq[Double]): Option[Double] = {
+    if (xs.isEmpty) {
+      None
+    } else {
+      val v = xs.sum / xs.length
+      Some(xs.map(e => math.pow(e - v, 2)).sum / xs.length)
+    }
+
+  }
+
   def main(args: Array[String]): Unit = {
     println("Map")
     println(Some("Renan").map(_.toUpperCase))
