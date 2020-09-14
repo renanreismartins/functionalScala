@@ -31,14 +31,10 @@ object Chap04 {
 
   case object None extends Option[Nothing]
 
-  def variance(xs: Seq[Double]): Option[Double] = {
-    if (xs.isEmpty) {
-      None
-    } else {
-      val v = xs.sum / xs.length
-      Some(xs.map(e => math.pow(e - v, 2)).sum / xs.length)
-    }
+  def mean(xs: Seq[Double]): Option[Double] = if (xs.isEmpty) None else Some(xs.sum / xs.length)
 
+  def variance(xs: Seq[Double]): Option[Double] = {
+    mean(xs).flatMap(m => mean(xs.map(e => math.pow(e - m, 2))))
   }
 
   def main(args: Array[String]): Unit = {
@@ -58,7 +54,7 @@ object Chap04 {
     println()
 
     println("orElse")
-    println(Some("Renan").orElse(Some("no value") ))
+    println(Some("Renan").orElse(Some("no value")))
     println(None.orElse(Some("no value")))
     println()
 
