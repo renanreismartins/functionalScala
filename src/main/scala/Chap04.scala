@@ -1,3 +1,5 @@
+import Chap03._
+
 object Chap04 {
 
   sealed trait Option[+A] {
@@ -39,6 +41,21 @@ object Chap04 {
 
   def map2[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = a.flatMap(va => b.map(vb => f(va, vb)))
 
+  def sequence[A](a: List[Option[A]]): Option[List[A]] = {
+    def loop(as: List[Option[A]], acc: List[A]): List[A] = {
+      as match {
+        case Cons(Some(v), xs) => loop(xs, Cons(v, acc))
+        case Cons(None, _) => Nil
+        case Nil => acc
+      }
+    }
+
+    loop(a, Nil) match {
+      case Nil => None
+      case x => Some(x)
+    }
+  }
+
   def main(args: Array[String]): Unit = {
     println("Map")
     println(Some("Renan").map(_.toUpperCase))
@@ -64,6 +81,11 @@ object Chap04 {
     println(Some("Renan").filter(_.length > 3))
     println(Some("Renan").filter(_.length > 10))
     println(None.filter(_ => true))
+    println()
+
+    println("sequence")
+    println(Chap04.sequence(Cons(Some("Renan"), Cons(Some("Reis"), Nil))))
+    println(Chap04.sequence(Cons(Some("Renan"), Cons(Some("Reis"), Cons(None, Nil)))))
     println()
   }
 }
