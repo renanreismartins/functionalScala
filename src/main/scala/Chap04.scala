@@ -73,13 +73,11 @@ object Chap04 {
       case h :: t => f(h) flatMap (b => traverse(t)(f) map (b :: _))
     }
 
+  def sequenceInTermsOfTraverse[A](a: List[Option[A]]): Option[List[A]] =
+    traverseInTermsOfSequence(a)(x => x)
+
 
   def main(args: Array[String]): Unit = {
-
-    println("traverseInTermsOfSequence")
-    println(Chap04.traverseInTermsOfSequence(List(Some("1"), Some("2")))(i => Some(i)))
-    println()
-
     println("Map")
     println(Some("Renan").map(_.toUpperCase))
     println(None.map(a => a))
@@ -114,5 +112,10 @@ object Chap04 {
     println("sequence")
     println(Chap04.sequence(List(Some("a"), None, Some("b"))))
     println(Chap04.sequence(List(None)))
+
+
+    println("traverseInTermsOfSequence")
+    println(Chap04.sequenceInTermsOfTraverse(List(Some("1"), Some("2"))))
+    println()
   }
 }
