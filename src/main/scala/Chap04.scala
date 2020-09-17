@@ -1,3 +1,4 @@
+import scala.util.Try
 //import Chap03._
 
 object Chap04 {
@@ -64,7 +65,21 @@ object Chap04 {
 
   def sequenceRight[A](a: List[Option[A]]): Option[List[A]] = a.foldRight[Option[List[A]]](Some(Nil))((opA, optionListA) => map2(opA, optionListA)((opaValue, listA) => opaValue :: listA))
 
+  def traverseInTermsOfSequence[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = sequence(a map (i => f(i)))
+
+  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] =
+    a match {
+      case Nil => Some(Nil)
+      case h :: t => f(h) flatMap (b => traverse(t)(f) map (b :: _))
+    }
+
+
   def main(args: Array[String]): Unit = {
+
+    println("traverseInTermsOfSequence")
+    println(Chap04.traverseInTermsOfSequence(List(Some("1"), Some("2")))(i => Some(i)))
+    println()
+
     println("Map")
     println(Some("Renan").map(_.toUpperCase))
     println(None.map(a => a))
