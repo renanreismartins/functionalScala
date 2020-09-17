@@ -20,6 +20,21 @@ object Chap04Either {
       case Right(a) => b flatMap(bb => Right(f(a, bb)))
       case Left(e) => Left(e)
     }
+
+    def sequence[E, A](es: List[Either[E, A]]): Either[E, List[A]] =
+      es match {
+        case Nil => Right(Nil)
+        case h :: t => h flatMap(hh => sequence(t) map (l => hh :: l ))
+      }
+
+    def traverse[E, A, B](as: List[A])(f: A => Either[E, B]): Either[E, List[B]] =
+      as match {
+        case Nil => Right(Nil)
+        case h :: t => f(h) flatMap(hh => traverse(t)(f) map (l => hh :: l ))
+      }
+
+    def sequenceInTermsOfTraverse[E, A](es: List[Either[E, A]]): Either[E, List[A]] =
+      traverse(es)(x => x)
   }
 
   case class Left[+E](value: E) extends Either[E, Nothing]
