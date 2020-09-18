@@ -7,7 +7,7 @@ object Chap05 {
         case Cons(h, t) => loop(t(), h() :: acc)
       }
 
-      loop(this, Nil)
+      loop(this, Nil).reverse
     }
   }
 
