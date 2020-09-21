@@ -23,7 +23,16 @@ object Chap05 {
 
     def drop(n: Int): Stream[A] = this match {
       case Empty => Empty
-      case Cons(_, t) => if (n == 0) this else t().drop(n -1)
+      case Cons(_, t) => if (n == 0) this else t().drop(n - 1)
+    }
+
+    def takeWhile(p: A => Boolean): Stream[A] = {
+      def loop(s: Stream[A], acc: Stream[A], p: A => Boolean): Stream[A] = s match {
+        case Empty => Empty
+        case Cons(h, t) => if (p(h())) cons(h(), loop(t(), acc, p)) else acc
+      }
+
+      loop(this, Empty, p)
     }
   }
 
@@ -57,6 +66,10 @@ object Chap05 {
 
     println("drop")
     println(Stream.cons(1, Stream.cons(2, Stream.empty)).drop(1).toList)
+    println()
+
+    println("take while")
+    println(Stream.cons(1, Stream.cons(2, Stream.empty)).takeWhile(_ == 1).toList)
     println()
   }
 }
