@@ -34,6 +34,14 @@ object Chap05 {
 
       loop(this, Empty, p)
     }
+
+    def foldRight[B](z: => B)(f: (A, => B) => B): B = // The arrow `=>` in front of the argument type `B` means that the function `f` takes its second argument by name and may choose not to evaluate it.
+      this match {
+        case Cons(h, t) => f(h(), t().foldRight(z)(f)) // If `f` doesn't evaluate its second argument, the recursion never occurs.
+        case _ => z
+      }
+
+    def forAll(p: A => Boolean): Boolean = foldRight(true)((a, acc) => p(a) && acc)
   }
 
   case object Empty extends Stream[Nothing]
@@ -70,6 +78,10 @@ object Chap05 {
 
     println("take while")
     println(Stream.cons(1, Stream.cons(2, Stream.empty)).takeWhile(_ == 1).toList)
+    println()
+
+    println("for all")
+    println(Stream.cons(1, Stream.cons(1, Stream.empty)).forAll(_ == 1))
     println()
   }
 }
