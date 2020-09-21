@@ -42,6 +42,8 @@ object Chap05 {
       }
 
     def forAll(p: A => Boolean): Boolean = foldRight(true)((a, acc) => p(a) && acc)
+
+    def takeWhileInTermsOfFoldRight(p: A => Boolean): Stream[A] = foldRight(Empty: Stream[A])((a, b) => if (p(a)) cons(a, b) else b)
   }
 
   case object Empty extends Stream[Nothing]
@@ -82,6 +84,11 @@ object Chap05 {
 
     println("for all")
     println(Stream.cons(1, Stream.cons(1, Stream.empty)).forAll(_ == 1))
+    println()
+
+    println("take while in terms of foldRight")
+    println(Stream.cons(1, Stream.cons(2, Stream.empty)).takeWhileInTermsOfFoldRight(_ == 1).toList)
+    println(Stream.cons(2, Stream.cons(2, Stream.empty)).takeWhileInTermsOfFoldRight(_ == 1).toList)
     println()
   }
 }
