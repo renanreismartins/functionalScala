@@ -44,7 +44,21 @@ object Chap05 {
     def forAll(p: A => Boolean): Boolean = foldRight(true)((a, acc) => p(a) && acc)
 
     def takeWhileInTermsOfFoldRight(p: A => Boolean): Stream[A] = foldRight(Empty: Stream[A])((a, b) => if (p(a)) cons(a, b) else b)
+
     def headOptionInTermsOfFoldRight(): Option[A] = foldRight(None: Option[A])((a, _) => if (true) Some(a) else None)
+
+    def map[B](f: A => B): Stream[B] = this match {
+      case Empty => Empty
+      case Cons(h, t) => cons(f(h()), t().map(f))
+    }
+
+    def mapInTermsOfFoldRight[B](f: A => B): Stream[B] = foldRight(Empty: Stream[B])((e, acc) => cons(f(e), acc))
+
+    def filterInTermsOfFoldRight(f: A => Boolean): Stream[A] = foldRight(Empty: Stream[A])((e, acc) => if (f(e)) cons(e, acc) else acc)
+
+    def append[B >: A](s: => Stream[B]): Stream[B] = foldRight(s)((h, t) => cons(h, t))
+
+    def flatMap[B](f: A => Stream[B]): Stream[B] = foldRight(Empty: Stream[B])((e, acc) => acc.append(f(e)))
   }
 
   case object Empty extends Stream[Nothing]
@@ -95,5 +109,15 @@ object Chap05 {
     println("headOption terms of foldRight")
     println(Stream.cons(1, Stream.cons(2, Stream.empty)).headOptionInTermsOfFoldRight())
     println(Stream.empty.headOptionInTermsOfFoldRight())
+
+    println("map")
+    println(Stream.cons(1, Stream.cons(2, Stream.empty)).map(_ - 1).toList)
+    println(Stream.cons(1, Stream.cons(2, Stream.empty)).mapInTermsOfFoldRight(_ - 1).toList)
+
+    println("filter")
+    println(Stream.cons(1, Stream.cons(2, cons(3, Stream.empty))).filterInTermsOfFoldRight(_ == 2).toList)
+
+    println("flatMap")
+    println(Stream.cons(1, Stream.cons(2, Stream.empty)).flatMap(a => cons(a + 1, cons(a + 2, Stream.empty))).toList)
   }
 }
