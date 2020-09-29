@@ -88,6 +88,10 @@ object Chap05 {
       case Some((e, s)) => cons(e, unfold(s)(f))
     }
 
+    def fromUnfold(n: Int): Stream[Int] = unfold(n)(s => Some(s + 1, s + 1))
+
+    def constantUnfold[A](a: A): Stream[A] = unfold(a)(s => Some(a, a))
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -136,7 +140,13 @@ object Chap05 {
     println("from")
     println(Stream.from(4).take(4).toList)
 
-    println("from")
+    println("unfold")
     println(Stream.unfold(0)(s => Some(s + 1, s + 1)).take(4).toList)
+
+    println("from in terms of unfold")
+    println(Stream.fromUnfold(4).take(3).toList)
+
+    println("constant in terms of unfold")
+    println(Stream.constant(4).take(4).toList)
   }
 }
