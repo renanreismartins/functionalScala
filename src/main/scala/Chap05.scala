@@ -1,4 +1,4 @@
-import Chap05.Stream.cons
+import Chap05.Stream.{cons, unfold}
 
 object Chap05 {
 
@@ -60,6 +60,33 @@ object Chap05 {
 
     def flatMap[B](f: A => Stream[B]): Stream[B] = foldRight(Empty: Stream[B])((e, acc) => acc.append(f(e)))
 
+    def mapUnfold[B](f: A => B): Stream[B] = unfold(this)(s => s match {
+      case Empty => None
+      case Cons(h, t) => Some(f(h()), t())
+    })
+
+    def takeUnfold(n: Int): Stream[A] = unfold((this, n)) {
+      case (Empty, _) => None
+      case (Cons(h, t), x) => if (x <= n) Some(h(), (t(), x + 1)) else None
+    }
+
+    def takeWhileUnfold(p: A => Boolean): Stream[A] = unfold(this) {
+      case Empty => None
+      case Cons(h, t) => if (p(h())) Some(h(), t()) else None
+    }
+
+    def zipWith[B, C](s2: Stream[B])(f: (A, B) => C): Stream[C] = unfold((this, s2)) {
+      case (Empty, _) => None
+      case (_, Empty) => None
+      case (Cons(h, t), Cons(h2, t2)) => Some(f(h(), h2()), (t(), t2()))
+    }
+
+    def zipAll[B](s2: Stream[B]): Stream[(Option[A], Option[B])] = unfold((this, s2)) {
+      case (Empty, Cons(h2, t2)) => Some((None, Some(h2())), (Empty, t2()))
+      case (Cons(h, t), Empty) => Some((Some(h()), None), (t(), Empty))
+      case (Empty, Empty) => None
+      case (Cons(h, t), Cons(h2, t2)) => Some((Some(h()), Some(h2())), (t(), t2()))
+    }
   }
 
   case object Empty extends Stream[Nothing]
@@ -90,8 +117,7 @@ object Chap05 {
 
     def fromUnfold(n: Int): Stream[Int] = unfold(n)(s => Some(s + 1, s + 1))
 
-    def constantUnfold[A](a: A): Stream[A] = unfold(a)(s => Some(a, a))
-
+    def constantUnfold[A](a: A): Stream[A] = unfold(a)(s => Some(a, s))
   }
 
   def main(args: Array[String]): Unit = {
@@ -117,7 +143,6 @@ object Chap05 {
 
     println("take while in terms of foldRight")
     println(Stream.cons(1, Stream.cons(2, Stream.empty)).takeWhileInTermsOfFoldRight(_ == 1).toList)
-    println(Stream.cons(2, Stream.cons(2, Stream.empty)).takeWhileInTermsOfFoldRight(_ == 1).toList)
     println()
 
     println("headOption terms of foldRight")
@@ -148,5 +173,23 @@ object Chap05 {
 
     println("constant in terms of unfold")
     println(Stream.constant(4).take(4).toList)
+
+    println("map in terms of unfold")
+    println(Stream.cons(1, Stream.cons(2, Stream.empty)).mapUnfold(_ + 1).toList)
+
+    println("take in terms of unfold")
+    println(Stream.cons(1, Stream.cons(2, Stream.empty)).takeUnfold(1).toList)
+
+    println("take while in terms of unfold")
+    println(Stream.cons(1, Stream.cons(2, Stream.empty)).takeWhileUnfold(_ == 1).toList)
+    println()
+
+    println("zipWith in terms of unfold")
+    println(Stream.cons(1, Stream.cons(2, Stream.empty)).zipWith(Stream.cons(1, Stream.cons(2, Stream.empty)))((a, b) => a + b).toList)
+    println()
+
+    println("zipAll in terms of unfold")
+    println(Stream.cons(1, Stream.cons(2, Stream.empty)).zipAll(Stream.cons(1, Stream.cons(2, Stream.empty))).toList)
+    println()
   }
 }
