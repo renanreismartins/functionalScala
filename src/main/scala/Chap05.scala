@@ -81,6 +81,8 @@ object Chap05 {
 
     def constant[A](a: A): Stream[A] = cons(a, constant(a))
 
+    def from(n: Int): Stream[Int] = cons(n, from(n + 1))
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -125,6 +127,9 @@ object Chap05 {
 
     println("constant")
     println(Stream.constant(1).take(4).toList)
+
+    println("from")
+    println(Stream.from(4).take(4).toList)
 
   }
 }
