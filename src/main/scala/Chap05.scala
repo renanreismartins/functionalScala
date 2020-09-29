@@ -59,6 +59,7 @@ object Chap05 {
     def append[B >: A](s: => Stream[B]): Stream[B] = foldRight(s)((h, t) => cons(h, t))
 
     def flatMap[B](f: A => Stream[B]): Stream[B] = foldRight(Empty: Stream[B])((e, acc) => acc.append(f(e)))
+
   }
 
   case object Empty extends Stream[Nothing]
@@ -77,6 +78,8 @@ object Chap05 {
     def apply[A](as: A*): Stream[A] =
       if (as.isEmpty) empty
       else cons(as.head, apply(as.tail: _*))
+
+    def constant[A](a: A): Stream[A] = cons(a, constant(a))
 
   }
 
@@ -119,5 +122,9 @@ object Chap05 {
 
     println("flatMap")
     println(Stream.cons(1, Stream.cons(2, Stream.empty)).flatMap(a => cons(a + 1, cons(a + 2, Stream.empty))).toList)
+
+    println("constant")
+    println(Stream.constant(1).take(4).toList)
+
   }
 }
