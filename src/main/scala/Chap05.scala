@@ -83,6 +83,11 @@ object Chap05 {
 
     def from(n: Int): Stream[Int] = cons(n, from(n + 1))
 
+    def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
+      case None => Empty
+      case Some((e, s)) => cons(e, unfold(s)(f))
+    }
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -131,5 +136,7 @@ object Chap05 {
     println("from")
     println(Stream.from(4).take(4).toList)
 
+    println("from")
+    println(Stream.unfold(0)(s => Some(s + 1, s + 1)).take(4).toList)
   }
 }
