@@ -32,7 +32,7 @@ object RNG {
   }
 
   def doubleInt(rng: RNG): ((Double, Int), RNG) = {
-    val ((i, d), r2) =  intDouble(rng)
+    val ((i, d), r2) = intDouble(rng)
     ((d, i), r2)
   }
 
@@ -43,9 +43,24 @@ object RNG {
     ((d, d2, d3), r3)
   }
 
+  def ints(count: Int)(rng: RNG): (List[Int], RNG) = {
+    def loop(counta: Int, rnga: RNG, acc: List[Int]): (List[Int], RNG) = {
+      if (counta == 0) (acc, rnga)
+      else {
+        val (i, s) = rnga.nextInt
+        loop(counta - 1, s, i :: acc)
+      }
+    }
+
+    loop(count, rng, List.empty)
+  }
+
   def main(args: Array[String]): Unit = {
     println("non negative")
     println(RNG.nonNegativeInt(Simple(1L)))
+
+    println("ints")
+    println(RNG.ints(3)(Simple(1L)))
   }
 
 }
