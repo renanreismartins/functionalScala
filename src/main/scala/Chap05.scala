@@ -87,6 +87,11 @@ object Chap05 {
       case (Empty, Empty) => None
       case (Cons(h, t), Cons(h2, t2)) => Some((Some(h()), Some(h2())), (t(), t2()))
     }
+
+    def tails: Stream[Stream[A]] = unfold(this) {
+      case Empty => None
+      case s => Some(s, s drop 1)
+    }
   }
 
   case object Empty extends Stream[Nothing]
@@ -118,6 +123,8 @@ object Chap05 {
     def fromUnfold(n: Int): Stream[Int] = unfold(n)(s => Some(s + 1, s + 1))
 
     def constantUnfold[A](a: A): Stream[A] = unfold(a)(s => Some(a, s))
+
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -190,6 +197,10 @@ object Chap05 {
 
     println("zipAll in terms of unfold")
     println(Stream.cons(1, Stream.cons(2, Stream.empty)).zipAll(Stream.cons(1, Stream.cons(2, Stream.empty))).toList)
+    println()
+
+    println("tails in terms of unfold")
+    println(Stream.cons(1, Stream.cons(2, Stream.empty)).tails.toList)
     println()
   }
 }
