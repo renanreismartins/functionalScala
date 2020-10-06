@@ -82,12 +82,17 @@ object RNG {
     fs.foldRight(unit(List[A]()))((f, acc) => map2(f, acc)(_ :: _))
 
 
-  def flatMap[A,B](f: Rand[A])(g: A => Rand[B]): Rand[B] = rng => {
+  def flatMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] = rng => {
     val (a, r) = f(rng)
     val x: Rand[B] = g(a)
     val z: (B, RNG) = x(r)
     z
   }
+
+  def mapInTermsOfFlatMap[A, B](s: Rand[A])(f: A => B): Rand[B] = RNG.flatMap(s)(a => unit(f(a)))
+
+  //def map2InTermsOfFlatMap[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = RNG.flatMap(ra)(a => RNG.flatMap(rb)(b => unit(f(a, b))))
+  def map2InTermsOfFlatMap[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = RNG.flatMap(ra)(a => RNG.map(rb)(b => f(a, b)))
 
   def main(args: Array[String]): Unit = {
     println("non negative")
