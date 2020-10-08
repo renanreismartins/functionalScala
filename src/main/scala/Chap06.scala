@@ -61,7 +61,7 @@ object RNG {
 
   def unit[A](a: A): Rand[A] = rng => (a, rng)
 
-  def map[A, B](s: Rand[A])(f: A => B): Rand[B] =
+  def map[S, A, B](s: S => (A, S))(f: A => B): S => (B, S) =
     rng => {
       val (a, rng2) = s(rng)
       (f(a), rng2)
@@ -111,6 +111,7 @@ object RNG {
     println(RNG.unit(1L)(Simple(1L)))
 
     println("map")
+    val a: RNG => (Int, RNG) = RNG.map(RNG.nonNegativeInt)(_ + 1)
     println(RNG.map(RNG.nonNegativeInt)(_ + 1)(Simple(1L)))
 
     println("double in terms of map")
@@ -120,4 +121,102 @@ object RNG {
     println(RNG.map2(RNG.int, RNG.int)((a, b) => a + b)(Simple(1L)))
   }
 
+}
+
+import State.{modify, _}
+
+case class State[S, +A](run: S => (A, S)) {
+  def map[B](f: A => B): State[S, B] = flatMap(a => unit(f(a)))
+
+  def map_[B](f: A => B): State[S, B] = {
+    ???
+  }
+
+  def map2[B, C](sb: State[S, B])(f: (A, B) => C): State[S, C] = flatMap(a => sb.map(b => f(a, b)))
+
+  def flatMap[B](f: A => State[S, B]): State[S, B] = State(s => {
+    val (a, s1) = run(s)
+    f(a).run(s1)
+  })
+}
+
+object State {
+  type Rand[A] = State[RNG, A]
+
+  def unit[S, A](a: A): State[S, A] = State(s => (a, s))
+
+  def sequence[S, A](sas: List[State[S, A]]): State[S, List[A]] =
+    sas.foldRight(unit[S, List[A]](List()))((f, acc) => f.map2(acc)(_ :: _))
+
+
+  def modify[S](f: S => S): State[S, Unit] = for {
+    s <- get // Gets the current state and assigns it to `s`.
+    _ <- set(f(s)) // Sets the new state to `f` applied to `s`.
+  } yield ()
+
+  def get[S]: State[S, S] = State(s => (s, s))
+
+  def set[S](s: S): State[S, Unit] = State(_ => ((), s))
+
+
+  def map[S, A, B](fa: State[S, A])(f: A => B): State[S, B] = State[S, B] { s: S =>
+    val (a, s2) = fa.run(s)
+    val b: B = f(a)
+    (b, s2)
+  }
+
+}
+
+sealed trait Input
+
+case object Coin extends Input
+
+case object Turn extends Input
+
+case class Machine(locked: Boolean, candies: Int, coins: Int)
+
+object Candy {
+  def update = (i: Input) => (s: Machine) =>
+    (i, s) match {
+      case (_, Machine(_, 0, _)) => s
+      case (Coin, Machine(false, _, _)) => s
+      case (Turn, Machine(true, _, _)) => s
+      case (Coin, Machine(true, candy, coin)) =>
+        Machine(false, candy, coin + 1)
+      case (Turn, Machine(false, candy, coin)) =>
+        Machine(true, candy - 1, coin)
+    }
+
+  def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = for {
+    _ <- sequence(inputs map (modify[Machine] _ compose update))
+    s <- get
+  } yield (s.coins, s.candies)
+
+  def main(args: Array[String]): Unit = {
+    //    val m: Machine = Machine(true, 5, 10)
+    //
+    //
+    //
+    //    val inputs = List(Coin, Turn, Coin, Turn, Coin, Turn, Coin, Turn)
+    //    val ab: State[Machine, (Int, Int)] = Candy.simulateMachine(inputs)
+    //    println(Candy.simulateMachine(inputs).run(m)._1)
+
+
+    get[Int].run(3)._1 == 3
+    get[Int].map(_ + 1)
+    val a: State[Int, Int] = get[Int]
+    val b: (Int, Int) = a.run(3)
+    //val b: (Int, Int) = State[Int, Int](s => (s, s)).run(3)
+    val r1 = b._1
+    val s1 = b._2
+
+    println(s1)
+    println(r1)
+
+
+
+    println("------")
+    println(State.map(get[Int])(_ + 1).run(1))
+    println(get[Int].map(_ + 1).map(_.toString).map(_ + "!").run(1))
+  }
 }

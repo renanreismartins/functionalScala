@@ -1,3 +1,5 @@
+import scala.annotation.tailrec
+
 object Chap03 {
 
   sealed trait List[+A]
@@ -7,9 +9,23 @@ object Chap03 {
   case class Cons[+A](head: A, tail: List[A]) extends List[A]
 
   object List {
+    //[] = 0
+    //[1] 1 + sum([])
+    // 1 + 0
+    // 1
     def sum(ints: List[Int]): Int = ints match {
       case Nil => 0
       case Cons(x, xs) => x + sum(xs)
+    }
+
+    def sumTail(ints: List[Int]): Int = {
+      @tailrec
+      def loop(l: List[Int], acc: Int): Int = l match {
+        case Nil => acc
+        case Cons(x, xs) => loop(xs, acc + x)
+      }
+
+      loop(ints, 0)
     }
 
     def product(ds: List[Double]): Double = ds match {
@@ -171,6 +187,15 @@ object Chap03 {
     println(List.hasSubsequence(List(1, 2, 3), List(1, 2)))
     println(List.hasSubsequence(List(1, 2, 3), List(5)))
     println(List.hasSubsequence(List(1), List(5)))
+
+//    def foldRight[A,B](as: List[A], z: B)(f: (A, B) => B): B = as match {
+//      case Nil => z
+//      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+//    }
+    //println(List.foldRight(List(1,2,3), Nil:List[Int])(Cons(_,_)))
+    println(List.foldRight(List(1,2,3), Nil:List[Int])((a, b) => Cons(a, b)))
+    println(List.foldRight(List(1,2,3), 0)((a, b) => a + b))
+    println(List.sumTail(List(1,2,3)))
   }
 
 }
