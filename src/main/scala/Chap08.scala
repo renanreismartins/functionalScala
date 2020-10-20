@@ -12,10 +12,20 @@ object Chap08 {
   */
 
   trait Prop {
+    def check: Boolean
+    def &&(p: Prop): Prop = if (this.check && p.check) Success else Failure
   }
 
   object Prop {
     def forAll[A](gen: Gen[A])(f: A => Boolean): Prop = ???
+  }
+
+  case object Success extends Prop {
+    override def check: Boolean = true
+  }
+
+  case object Failure extends Prop {
+    override def check: Boolean = false
   }
 
   object Gen {
