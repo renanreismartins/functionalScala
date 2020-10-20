@@ -2,6 +2,7 @@ import Chap05.Stream
 import java.util.concurrent.{ExecutorService, Executors}
 
 import Chap08.{Gen, Prop}
+import RNG.Simple
 
 object Chap08 {
 
@@ -13,8 +14,13 @@ object Chap08 {
 
   trait Prop {
     def check: Boolean
+
     def &&(p: Prop): Prop = new Prop {
       def check = Prop.this.check && p.check
+    }
+
+    def choose(start: Int, stopExclusive: Int): Gen[Int] = {
+      Gen(State(RNG.nonNegativeInt).map(n => start + n % (stopExclusive - start)))
     }
   }
 
@@ -25,6 +31,8 @@ object Chap08 {
   object Gen {
     def unit[A](a: => A): Gen[A] = ???
   }
+
+  case class Gen[A](sample: State[RNG, A])
 
   trait Gen[A] {
     def map[A, B](f: A => B): Gen[B] = ???
