@@ -1,5 +1,7 @@
 import java.util.concurrent._
 
+import Chap07.Par.{Par, fork}
+
 object Chap07 {
 
   object Par {
@@ -32,20 +34,41 @@ object Chap07 {
 
     def asyncF[A,B](f: A => B): A => Par[B] = a => lazyUnit(f(a))
 
+    def sequence[A](l: List[Par[A]]): Par[List[A]] =
+      l.foldRight(unit(List[A]()))((h, t) => map2(h, t)(_ :: _))
+
+    def parMap[A,B](ps: List[A])(f: A => B): Par[List[B]] = fork {
+      val fbs: List[Par[B]] = ps.map(asyncF(f))
+      sequence(fbs)
+    }
+
+    def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = ???
+
+    def equal[A](e: ExecutorService)(p: Par[A], p2: Par[A]): Boolean =
+      p(e).get == p2(e).get
+
+
   }
 
-  def sum(ints: IndexedSeq[Int]): Int =
+//  def sum2(ints: IndexedSeq[Int]): Int =
+//    if (ints.size <= 1)
+//      ints.headOption getOrElse 0
+//    else {
+//      val (l, r) = ints.splitAt(ints.length / 2)
+//      sum(l) + sum(r)
+//    }
+
+  def sum(ints: IndexedSeq[Int]): Par[Int] =
     if (ints.size <= 1)
-      ints.headOption getOrElse 0
+      Par.unit(ints.headOption getOrElse 0)
     else {
-      val (l, r) = ints.splitAt(ints.length / 2)
-      sum(l) + sum(r)
+      val (l,r) = ints.splitAt(ints.length/2)
+      Par.map2(fork(sum(l)), fork(sum(r)))(_ + _)
     }
 
 
-
   def main(args: Array[String]): Unit = {
-    println(sum(IndexedSeq(1, 2, 3)))
+    println(Par.run(Executors.newFixedThreadPool(10))(sum(IndexedSeq(1, 2, 3))))
   }
 
 }
