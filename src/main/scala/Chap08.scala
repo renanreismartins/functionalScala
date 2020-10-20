@@ -28,17 +28,26 @@ object Chap08 {
     def forAll[A](gen: Gen[A])(f: A => Boolean): Prop = ???
   }
 
-  object Gen {
-    def unit[A](a: => A): Gen[A] = ???
-  }
-
   case class Gen[A](sample: State[RNG, A])
 
-  trait Gen[A] {
-    def map[A, B](f: A => B): Gen[B] = ???
+  object Gen {
+    def unit[A](a: => A): Gen[A] = Gen(State.unit(a))
 
-    def flatMap[A, B](f: A => Gen[B]): Gen[B] = ???
+    def boolean: Gen[Boolean] = Gen(State(RNG.nonNegativeInt).map(n => n % 2 == 0))
+
+    def listOfN[A](n: Int, g: Gen[A]): Gen[List[A]] = {
+      val a: Seq[State[RNG, A]] = List.fill(n)(g.sample)
+      val b: State[RNG, Seq[A]] = State.sequence(a)
+      Gen(b)
+    }
   }
+
+//  trait Gen[A] {
+//
+//    def map[A, B](f: A => B): Gen[B] = ???
+//
+//    def flatMap[A, B](f: A => Gen[B]): Gen[B] = ???
+//  }
 
   trait SGen[+A] {
 
